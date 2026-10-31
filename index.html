@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>EPUB 변환기</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="EPUB 변환기" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#F7F1E7" />
+  <style>
+    :root{--pearl:#F7F1E7;--paper:#FFFCF7;--espresso:#554536;--accent:#745B43;--ink:#342D26;--muted:#706457;--border:#DED2C1;--danger:#A34F54}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--pearl);color:var(--ink)}
+    /* 앱 화면 바탕과 같은 은은한 그라데이션(2026-10-31 사이트 디자인 통일) */
+    body{background:radial-gradient(circle at 8% 4%,rgba(234,218,195,.58),transparent 31rem),radial-gradient(circle at 94% 22%,rgba(185,158,120,.12),transparent 25rem),var(--pearl)}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:anywhere}
+    .lock{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:max(32px,env(safe-area-inset-top)) 20px max(32px,env(safe-area-inset-bottom));text-align:center}
+    .mark{width:72px;height:72px;border-radius:18px;background:var(--espresso);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(85,69,54,.22)}
+    .mark svg{width:34px;height:34px;fill:none;stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-0.04em;color:var(--espresso)}
+    .card{width:100%;max-width:420px;padding:22px 20px;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:14px;background:var(--paper);box-shadow:0 8px 26px rgba(52,45,38,.07);text-align:left}
+    .card[hidden],[hidden]{display:none!important}
+    .hint ol{margin:8px 0 0;padding-left:22px}
+    .hint li{margin:4px 0}
+    .note{margin:10px 0 0;font-size:14px;color:var(--muted)}
+    label{display:block;margin-bottom:8px;font-weight:700}
+    input{width:100%;height:54px;padding:0 14px;border:1.5px solid #D7C9B5;border-radius:12px;background:#FFFFFF;color:var(--ink);font:inherit;font-size:18px;letter-spacing:.08em}
+    input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(205,189,159,.45)}
+    button{width:100%;height:54px;margin-top:12px;border:0;border-radius:12px;background:var(--accent);color:#FFFFFF;font:inherit;font-size:18px;font-weight:700;box-shadow:0 5px 16px rgba(116,91,67,.24),0 1px 3px rgba(52,45,38,.1)}
+    button:active{background:var(--espresso)}
+    button:disabled{opacity:.55}
+    button.secondary{background:var(--paper);color:var(--ink);border:1.5px solid var(--border);font-size:16px;height:48px;box-shadow:none}
+    button.secondary:active{border-color:var(--accent);color:var(--accent);background:var(--paper)}
+    .message{min-height:1.6em;margin:12px 0 0;color:var(--muted)}
+    .message.is-error{color:var(--danger);font-weight:700}
+    .lead{margin:0 0 14px;color:var(--muted)}
+    .spinner{width:32px;height:32px;margin:0 auto 14px;border-radius:50%;border:3px solid rgba(116,91,67,.18);border-top-color:var(--accent);animation:spin .9s linear infinite}
+    .bar{height:8px;margin-top:12px;border-radius:4px;background:rgba(116,91,67,.15);overflow:hidden}
+    .bar div{height:100%;width:0;background:var(--accent);transition:width .2s}
+    #progress p{margin:0;text-align:center}
+    .version{font-size:13px;color:var(--muted)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+  <script src="pwa-core.js" data-mode="lock" defer></script>
+</head>
+<body>
+  <main class="lock">
+    <div class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+    <h1>EPUB 변환기</h1>
+    <section id="install-hint" class="card hint" hidden>
+      <strong>홈 화면에 추가해서 쓰세요.</strong>
+      <ol>
+        <li>Safari의 <b>공유</b> 단추(네모에서 위로 향한 화살표)를 누릅니다. 단추가 보이지 않으면 주소창 옆 <b>⋯</b>을 누른 뒤 <b>공유</b>를 누릅니다.</li>
+        <li><b>홈 화면에 추가</b>를 누릅니다. <b>웹 앱으로 열기</b>가 보이면 켜 둔 채 <b>추가</b>를 누릅니다.</li>
+        <li>홈 화면에 생긴 <b>EPUB 변환기</b> 아이콘으로 엽니다. 비밀번호는 그 앱에서 넣습니다.</li>
+      </ol>
+      <p class="note">Safari 화면과 홈 화면 앱은 저장 공간이 따로라, 여기서 비밀번호를 넣으면 홈 화면 앱에서 다시 넣고 앱 파일도 다시 받아야 합니다.</p>
+    </section>
+    <section id="safari-gate" class="card" hidden>
+      <p class="lead">홈 화면 앱으로 열면 이 안내 대신 비밀번호 칸이 나옵니다.</p>
+      <button id="safari-continue" class="secondary" type="button">Safari에서 그냥 쓰기</button>
+    </section>
+    <form id="lock-form" class="card" hidden>
+      <p class="lead">이 앱에서 처음 한 번만 비밀번호를 넣습니다. 그다음부터는 바로 열리고, 인터넷이 없어도 쓸 수 있습니다.</p>
+      <label for="password">비밀번호</label>
+      <input id="password" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" />
+      <button id="unlock-button" type="submit">열기</button>
+      <p id="lock-message" class="message" role="alert"></p>
+      <button id="continue-button" class="secondary" type="button" hidden>지금 버전 계속 쓰기</button>
+      <button id="reset-button" class="secondary" type="button" hidden>앱 파일 다시 받기</button>
+    </form>
+    <section id="progress" class="card" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="progress-text">준비하는 중입니다.</p>
+      <div class="bar"><div id="progress-bar"></div></div>
+    </section>
+    <p id="app-version" class="version"></p>
+  </main>
+</body>
+</html>

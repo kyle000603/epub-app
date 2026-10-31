@@ -1,0 +1,97 @@
+{
+  "format": 1,
+  "version": "2.3.0-03f1d3026098",
+  "app_version": "2.3.0",
+  "files": [
+    {
+      "path": "icons/apple-touch-icon.png",
+      "size": 2133,
+      "sha256": "244136d4b0424bbc56b905879d0b737cf038243927274afb1118fa540445616e",
+      "type": "image/png"
+    },
+    {
+      "path": "icons/icon-192.png",
+      "size": 2180,
+      "sha256": "5d930244830c56d034a9de6c1bb638bd09912cab214c956eda060bfe827c3278",
+      "type": "image/png"
+    },
+    {
+      "path": "icons/icon-512.png",
+      "size": 5852,
+      "sha256": "41b38c497be93871c7c314661492bf89d31d7dfbdcb3aa86e4a3d407f1c92c09",
+      "type": "image/png"
+    },
+    {
+      "path": "index.html",
+      "size": 6714,
+      "sha256": "ae5ec50275ebd6ae06ebdaeb9baef4c86551fe17ad39b2145991a077a5d3d30e",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size": 553,
+      "sha256": "6e8c4da6a2722920ca1830a57cf6d9713f8ffadf6fc578cedaf82e3d55523493",
+      "type": "application/manifest+json"
+    },
+    {
+      "path": "pwa-core.js",
+      "size": 88036,
+      "sha256": "d6ac31d69ba43bd0f6d9bdd1fc91cb2e322cdd89e677bcb2c90ac8ec3fe5fb0d",
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "pyodide/pyodide-lock.json",
+      "size": 129150,
+      "sha256": "cb18729b18db7ce2482d196209c8051d8122441b817fc2f644d643b44e5e1b0f",
+      "type": "application/json"
+    },
+    {
+      "path": "pyodide/pyodide.asm.js",
+      "size": 1255688,
+      "sha256": "8bd8175d6b97ee4ffff85c5aaf44130fad3e9322939826f2a52d27d786ef8908",
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "pyodide/pyodide.asm.wasm",
+      "size": 10105545,
+      "sha256": "92160102d09feeb8c738a07c870bde47fd4c141fd70b5376188bdd951df9ea23",
+      "type": "application/wasm"
+    },
+    {
+      "path": "pyodide/pyodide.js",
+      "size": 14913,
+      "sha256": "11394774b02fa67bb4513db9433b6a8303a3926da906e4255ec85ac97b719b4b",
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "pyodide/python_stdlib.zip",
+      "size": 2360738,
+      "sha256": "cb5f8d7eae384fcf27c574d8b13901de1753a50f93038130c326f85b88c9012b",
+      "type": "application/zip"
+    },
+    {
+      "path": "python-packages.zip",
+      "size": 717426,
+      "sha256": "1aceb49acb991576abdc3e022c8062a5397f1ae65d00f7b24beade47c82dd9b1",
+      "type": "application/zip"
+    },
+    {
+      "path": "sw.js",
+      "size": 6552,
+      "sha256": "bfdfdafc1ee29caf7148e9e9085f144d89b2c334c1fa0bed22ebefcbf619592d",
+      "type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "vault.bin",
+      "size": 6172532,
+      "sha256": "40b215fb4f4ebebe51911cf3075c0c56c1a940adaee3a44fdce658b2ec9e990b",
+      "type": "application/octet-stream"
+    }
+  ],
+  "vault": {
+    "path": "vault.bin",
+    "salt": "y+ZZekAUvn/AyKqMy9LQVg==",
+    "iterations": 2000000,
+    "check": "DGW6sdAJPdy3yvvO6eBrrUOY6idEWOObe79fgQMShMdoKVrWycxzbYQF"
+  }
+}
