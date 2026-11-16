@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>EPUB 변환기</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="EPUB 변환기" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#F7F1E7" />
+  <script>
+    /* 화면 색(2026-11-01 사용자 요청 "당연히 마지막으로 선택한 색으로 처음 로딩될 때 바로 뜨도록 해주고"): 앱에서 마지막으로 고른 색 이름
+       (hwp_theme)을 읽어 첫 그림 전에 <html>에 단다. 직접 고른 색이면 앱이 이 기기에 적어 둔 계산값(hwp_theme_paint)에서 바탕과
+       강조색을 앱과 같은 방법으로 정한다. 읽기만 하고 저장소에는 쓰지 않는다. 값이 없거나 이상하면 기본(아이보리) 그대로다. */
+    (function () {
+      try {
+        var d = document.documentElement, s = localStorage, k = s.getItem("hwp_theme");
+        var bgs = { pink: "#FFF0F5", purple: "#F5F0FF", blue: "#EEF6FF", yellow: "#FFFCE5", orange: "#FFF3E8", black: "#F0F0F0" };
+        var hex = function (v) { v = String(v || "").trim(); return /^#[0-9a-f]{6}$/i.test(v) ? v.toUpperCase() : null; };
+        var lum = function (h) {
+          var c = [1, 3, 5].map(function (i) { var x = parseInt(h.substr(i, 2), 16) / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+          return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+        };
+        var bg = bgs[k] || null;
+        if (k === "custom") {
+          var c = JSON.parse(s.getItem("hwp_theme_paint") || "null"), v = c && c.k === "custom" && c.vars;
+          var page = v && hex(v["--stage"]), ink = v && hex(v["--nav-ink"]);
+          if (!page || !ink) return;
+          var ac = Math.abs(lum(ink) - lum(page)) > 0.4 ? ink : (lum(page) > 0.4 ? "#2A2A2E" : "#F2F3F5");
+          d.style.setProperty("--page-bg", page);
+          d.style.setProperty("--theme-ac", ac);
+          d.style.setProperty("--theme-ac-ink", lum(ac) > 0.4 ? "#2A2A2E" : "#FFFFFF");
+          if (lum(page) < 0.2) d.setAttribute("data-dark", "1");
+          bg = page;
+        }
+        if (!bg) return;
+        d.setAttribute("data-theme", k);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute("content", bg);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root{--pearl:#F7F1E7;--paper:#FFFCF7;--espresso:#554536;--accent:#745B43;--ink:#342D26;--muted:#706457;--border:#DED2C1;--danger:#A34F54;
+      --field:#D7C9B5;--white:#FFFFFF;--on:#FFFFFF;
+      --ivory-rgb:234,218,195;--sand-rgb:185,158,120;--esp-rgb:85,69,54;--ink-rgb:52,45,38;--ac-rgb:116,91,67;--ecru-rgb:205,189,159}
+    /* 색 테마(앱과 같은 값): 바탕·카드·글자·강조색·선·그림자를 그 색으로 */
+    html[data-theme="pink"]{--pearl:#FFF0F5;--paper:#FFFAFC;--espresso:#6A3446;--accent:#AB3464;--ink:#4A2A36;--muted:#845466;--border:#EBCAD5;--field:#E6BECB;
+      --ivory-rgb:251,206,222;--sand-rgb:206,139,159;--esp-rgb:106,52,70;--ink-rgb:74,42,54;--ac-rgb:171,52,100;--ecru-rgb:226,173,188}
+    html[data-theme="purple"]{--pearl:#F5F0FF;--paper:#FCFAFF;--espresso:#4A3F6F;--accent:#6648B1;--ink:#35294F;--muted:#625580;--border:#D7CFEC;--field:#CEC4E7;
+      --ivory-rgb:225,213,251;--sand-rgb:163,152,210;--esp-rgb:74,63,111;--ink-rgb:53,41,79;--ac-rgb:102,72,177;--ecru-rgb:191,183,229}
+    html[data-theme="blue"]{--pearl:#EEF6FF;--paper:#FAFCFF;--espresso:#2D4A68;--accent:#0E65AF;--ink:#213A54;--muted:#4A6683;--border:#C3D7E9;--field:#B5CEE4;
+      --ivory-rgb:202,223,243;--sand-rgb:129,165,204;--esp-rgb:45,74,104;--ink-rgb:33,58,84;--ac-rgb:14,101,175;--ecru-rgb:164,193,225}
+    html[data-theme="yellow"]{--pearl:#FFFCE5;--paper:#FFFEF7;--espresso:#58441F;--accent:#8E5E00;--ink:#3A3520;--muted:#716840;--border:#DAD5B8;--field:#D2CCA8;
+      --ivory-rgb:228,222,180;--sand-rgb:183,158,114;--esp-rgb:88,68,31;--ink-rgb:58,53,32;--ac-rgb:142,94,0;--ecru-rgb:207,187,152}
+    html[data-theme="orange"]{--pearl:#FFF3E8;--paper:#FFFBF8;--espresso:#653D20;--accent:#A64500;--ink:#4A2E17;--muted:#815C39;--border:#E8CFBA;--field:#E2C4AB;
+      --ivory-rgb:247,213,183;--sand-rgb:200,149,115;--esp-rgb:101,61,32;--ink-rgb:74,46,23;--ac-rgb:166,69,0;--ecru-rgb:222,180,152}
+    html[data-theme="black"]{--pearl:#F0F0F0;--paper:#FAFAFA;--espresso:#46484B;--accent:#3A3D44;--ink:#2C2E32;--muted:#61656C;--border:#D2D4D9;--field:#C7CBD1;
+      --ivory-rgb:218,220,225;--sand-rgb:160,161,166;--esp-rgb:70,72,75;--ink-rgb:44,46,50;--ac-rgb:58,61,68;--ecru-rgb:188,190,193}
+    html[data-theme]:not([data-theme="ivory"]){--danger:#9A474C}
+    /* 직접 고른 색: 기본값(고른 바탕·강조색 + 차분한 회색), 상대 색 문법이 되면 앱과 같은 밝기 구조. 어두운 바탕은 어두운 면·밝은 글자 */
+    html[data-theme="custom"]{--pearl:var(--page-bg);--paper:#FAFAFA;--espresso:#46484B;--accent:var(--theme-ac);--on:var(--theme-ac-ink);--ink:#2C2E32;--muted:#5D6168;--border:#D2D4D9;--field:#C7CBD1;
+      --ivory-rgb:218,220,225;--sand-rgb:160,161,166;--esp-rgb:70,72,75;--ink-rgb:44,46,50;--ac-rgb:58,61,68;--ecru-rgb:188,190,193}
+    html[data-theme="custom"][data-dark]{--paper:#252830;--white:#2B2F37;--espresso:#F2F3F6;--ink:#ECEEF2;--muted:#BCC1CA;--border:#3D424C;--field:#4A505B;--danger:#F6B3B7;
+      --ivory-rgb:66,72,84;--sand-rgb:150,156,168;--esp-rgb:0,0,0;--ink-rgb:0,0,0;--ac-rgb:205,210,220;--ecru-rgb:120,128,142;color-scheme:dark}
+    @supports (color:oklch(from red l c h)){
+      html[data-theme="custom"]{--pearl:oklch(from var(--page-bg) max(l,.94) min(c,.04) h);--accent:oklch(from var(--theme-ac) min(l,.5) c h);--on:#FFFFFF;
+        --ink:oklch(from var(--theme-ac) .3 min(c,.03) h);--espresso:oklch(from var(--theme-ac) .4 min(c,.05) h);--muted:oklch(from var(--theme-ac) .47 min(c,.035) h);
+        --border:oklch(from var(--theme-ac) .87 min(c,.025) h);--field:oklch(from var(--theme-ac) .84 min(c,.03) h);--paper:oklch(from var(--pearl) max(l,.985) min(c,.012) h)}
+      html[data-theme="custom"][data-dark]{--pearl:oklch(from var(--page-bg) min(l,.27) min(c,.05) h);--accent:oklch(from var(--theme-ac) max(l,.82) min(c,.12) h);--on:#1F2023;
+        --ink:oklch(from var(--theme-ac) .93 min(c,.02) h);--espresso:oklch(from var(--theme-ac) .96 min(c,.03) h);--muted:oklch(from var(--theme-ac) .8 min(c,.025) h);
+        --paper:oklch(from var(--pearl) calc(l + .05) c h);--white:oklch(from var(--pearl) calc(l + .08) c h);--border:oklch(from var(--pearl) calc(l + .13) c h);--field:oklch(from var(--pearl) calc(l + .17) c h)}
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--pearl);color:var(--ink)}
+    /* 앱 화면 바탕과 같은 은은한 그라데이션(2026-10-31 사이트 디자인 통일) */
+    body{background:radial-gradient(circle at 8% 4%,rgba(var(--ivory-rgb),.58),transparent 31rem),radial-gradient(circle at 94% 22%,rgba(var(--sand-rgb),.12),transparent 25rem),var(--pearl)}
+    html[data-theme="custom"] body{background:var(--pearl)}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%;word-break:keep-all;overflow-wrap:anywhere}
+    .lock{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:max(32px,env(safe-area-inset-top)) 20px max(32px,env(safe-area-inset-bottom));text-align:center}
+    .mark{width:72px;height:72px;border-radius:18px;background:var(--espresso);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(var(--esp-rgb),.22)}
+    .mark svg{width:34px;height:34px;fill:none;stroke:var(--on);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    html[data-theme="custom"][data-dark] .mark{background:var(--accent)}
+    h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-0.04em;color:var(--espresso)}
+    .card{width:100%;max-width:420px;padding:22px 20px;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:14px;background:var(--paper);box-shadow:0 8px 26px rgba(var(--ink-rgb),.07);text-align:left}
+    .card[hidden],[hidden]{display:none!important}
+    .hint ol{margin:8px 0 0;padding-left:22px}
+    .hint li{margin:4px 0}
+    .note{margin:10px 0 0;font-size:14px;color:var(--muted)}
+    label{display:block;margin-bottom:8px;font-weight:700}
+    input{width:100%;height:54px;padding:0 14px;border:1.5px solid var(--field);border-radius:12px;background:var(--white);color:var(--ink);font:inherit;font-size:18px;letter-spacing:.08em}
+    input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--ecru-rgb),.45)}
+    button{width:100%;height:54px;margin-top:12px;border:0;border-radius:12px;background:var(--accent);color:var(--on);font:inherit;font-size:18px;font-weight:700;box-shadow:0 5px 16px rgba(var(--ac-rgb),.24),0 1px 3px rgba(var(--ink-rgb),.1)}
+    button:active{background:var(--espresso)}
+    button:disabled{opacity:.55}
+    button.secondary{background:var(--paper);color:var(--ink);border:1.5px solid var(--border);font-size:16px;height:48px;box-shadow:none}
+    button.secondary:active{border-color:var(--accent);color:var(--accent);background:var(--paper)}
+    .message{min-height:1.6em;margin:12px 0 0;color:var(--muted)}
+    .message.is-error{color:var(--danger);font-weight:700}
+    .lead{margin:0 0 14px;color:var(--muted)}
+    .spinner{width:32px;height:32px;margin:0 auto 14px;border-radius:50%;border:3px solid rgba(var(--ac-rgb),.18);border-top-color:var(--accent);animation:spin .9s linear infinite}
+    .bar{height:8px;margin-top:12px;border-radius:4px;background:rgba(var(--ac-rgb),.15);overflow:hidden}
+    .bar div{height:100%;width:0;background:var(--accent);transition:width .2s}
+    #progress p{margin:0;text-align:center}
+    .version{font-size:13px;color:var(--muted)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+  <script src="pwa-core.js" data-mode="lock" defer></script>
+</head>
+<body>
+  <main class="lock">
+    <div class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+    <h1>EPUB 변환기</h1>
+    <section id="install-hint" class="card hint" hidden>
+      <strong>홈 화면에 추가해서 쓰세요.</strong>
+      <ol>
+        <li>Safari의 <b>공유</b> 단추(네모에서 위로 향한 화살표)를 누릅니다. 단추가 보이지 않으면 주소창 옆 <b>⋯</b>을 누른 뒤 <b>공유</b>를 누릅니다.</li>
+        <li><b>홈 화면에 추가</b>를 누릅니다. <b>웹 앱으로 열기</b>가 보이면 켜 둔 채 <b>추가</b>를 누릅니다.</li>
+        <li>홈 화면에 생긴 <b>EPUB 변환기</b> 아이콘으로 엽니다. 비밀번호는 그 앱에서 넣습니다.</li>
+      </ol>
+      <p class="note">Safari 화면과 홈 화면 앱은 저장 공간이 따로라, 여기서 비밀번호를 넣으면 홈 화면 앱에서 다시 넣고 앱 파일도 다시 받아야 합니다.</p>
+    </section>
+    <section id="safari-gate" class="card" hidden>
+      <p class="lead">홈 화면 앱으로 열면 이 안내 대신 비밀번호 칸이 나옵니다.</p>
+      <button id="safari-continue" class="secondary" type="button">Safari에서 그냥 쓰기</button>
+    </section>
+    <form id="lock-form" class="card" hidden>
+      <p class="lead">이 앱에서 처음 한 번만 비밀번호를 넣습니다. 그다음부터는 바로 열리고, 인터넷이 없어도 쓸 수 있습니다.</p>
+      <label for="password">비밀번호</label>
+      <input id="password" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" />
+      <button id="unlock-button" type="submit">열기</button>
+      <p id="lock-message" class="message" role="alert"></p>
+      <button id="continue-button" class="secondary" type="button" hidden>지금 버전 계속 쓰기</button>
+      <button id="reset-button" class="secondary" type="button" hidden>앱 파일 다시 받기</button>
+    </form>
+    <section id="progress" class="card" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="progress-text">준비하는 중입니다.</p>
+      <div class="bar"><div id="progress-bar"></div></div>
+    </section>
+    <p id="app-version" class="version"></p>
+  </main>
+</body>
+</html>
